@@ -1,1 +1,20 @@
 /* You can add global styles to this file, and also import other style files */
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+html, body { height: 100%; }
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    background-color: #EDF6FF;
+}
+.m-left {
+    margin-left: 30px !important;
+}
+.container {
+    padding: 20px;
+}
+.content-wrapper {
+    padding: 20px;
+    border-radius: 12px;
+    background-color: #fff;
+}
