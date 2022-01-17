@@ -1,6 +1,8 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, ViewChild, AfterViewInit } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { UserDataService } from 'src/app/services/user-data.service';
 
 @Component({
   selector: 'app-user-data',
@@ -11,12 +13,22 @@ import { MatTableDataSource } from '@angular/material/table';
 export class UserDataComponent implements AfterViewInit {
 
   displayedColumns: string[] = ['id', 'name', 'favouriteCount'];
+  userData: any = [];
   dataSource = new MatTableDataSource<UserModel>(USER_DATA);
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
+  constructor(private http: HttpClient, private userDataService: UserDataService) { }
+
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
+  }
+
+  ngOnInit() {
+    this.userDataService.getUserData().subscribe(data => {
+      this.userData = data;
+      console.log(this.userData);
+    })
   }
 }
 
