@@ -13,11 +13,14 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { UserDataComponent } from './components/user-data/user-data.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+import { MinutesToHoursPipe } from './pipes/min2hourspipe';
+
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
-    UserDataComponent
+    UserDataComponent,
+    MinutesToHoursPipe
   ],
   imports: [
     BrowserModule,

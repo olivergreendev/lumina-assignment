@@ -1,5 +1,4 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { HttpClient } from '@angular/common/http';
 import { Component, ViewChild, AfterViewInit } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -30,8 +29,7 @@ export class UserDataComponent implements AfterViewInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private http: HttpClient,
-              private omdbRequestService: OmdbRequestService,
+  constructor(private omdbRequestService: OmdbRequestService,
               private usersRequestService: UsersService) { }
 
   ngAfterViewInit() {
@@ -39,9 +37,6 @@ export class UserDataComponent implements AfterViewInit {
   }
 
   ngOnInit() {
-    
-    // this.fetchUserData().then(res => this.fetchMovieData());
-
     this.usersRequestService.getUsers().subscribe((data: any) => {
       this.userData = data;
       this.dataSource = this.userData;
@@ -49,51 +44,18 @@ export class UserDataComponent implements AfterViewInit {
         this.userMovieData.push(data[i].favourite_movies.split(','));
         for(let k = 0; k < this.userMovieData[i].length; k++) {
           this.omdbRequestService.getMovieData(this.userMovieData[i][k]).subscribe((data: Movie) => {
-            // this.fetchedUserMovieData.push([{title: data.Title, poster: data.Poster, plot: data.Plot}]);
-            this.userMovieData[i][k] = {title: data.Title, poster: data.Poster, plot: data.Plot};
+            this.userMovieData[i][k] = {title: data.Title,
+                                        poster: data.Poster,
+                                        plot: data.Plot,
+                                        rated: data.Rated,
+                                        year: data.Year,
+                                        genre: data.Genre,
+                                        runtime: data.Runtime,
+                                        director: data.Director};
           });
         }
       }
-      console.log(this.userMovieData);
-      // console.log(this.fetchedUserMovieData);
     })
-
-    // This is working, however the API code needs this.userMovieData to not = null before executing
-    // Promises ?
-    // setTimeout(() => {
-    //   for(let i = 0; i < this.userMovieData.length; i++) {
-    //     for(let k = 0; k < this.userMovieData[i].length; k++) {
-    //       this.omdbRequestService.getMovieData(this.userMovieData[i][k]).subscribe((data: Movie) => {
-    //         this.userMovieData[i][k] = {title: data.Title, poster: data.Poster, plot: data.Plot};
-    //       });
-    //     }
-    //   }
-    //   // console.log(this.userMovieData);
-    // }, 2000);
-  }
-  fetchUserData() {
-    return new Promise((resolve, reject) => {
-      this.usersRequestService.getUsers().subscribe((data: any) => {
-        this.userData = data;
-        this.dataSource = this.userData;
-        for(let i = 0; i < data.length; i++) {
-          this.userMovieData.push(data[i].favourite_movies.split(','));
-        }
-        // console.log(this.userMovieData);
-        resolve('Promise resolved.');
-      });
-    });
-  }
-
-  fetchMovieData() {
-    for(let i = 0; i < this.userMovieData.length; i++) {
-      for(let k = 0; k < this.userMovieData[i].length; k++) {
-        this.omdbRequestService.getMovieData(this.userMovieData[i][k]).subscribe((data: Movie) => {
-          this.userMovieData[i][k] = {title: data.Title, poster: data.Poster, plot: data.Plot};
-        });
-      }
-    }
-    // console.log(this.userMovieData[5][1]);
   }
 }
 
@@ -102,34 +64,15 @@ export interface UserModel {
   firstName: string;
   lastName: string;
   favourite_movies: string;
-  movies: string[];
 }
 
 export interface Movie {
   Title: string;
   Poster: string;
   Plot: string;
+  Rated: string;
+  Year: string;
+  Genre: string;
+  Runtime: string;
+  Director: string;
 }
-
-/*
-[
-  {
-    id: 'tt0167260',
-    title: 'The Lord of the Rings: The Fellowship of the Ring',
-    poster: 'https://m.media-amazon.com/images/M/MV5BNzA5ZDNlZWMtM2NhNS00NDJjLTk4NDItYTRmY2EwMWZlMTY3XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg',
-    plot: "Gandalf and Aragorn lead the World of Men against Sauron's army to draw his gaze from Frodo and Sam as they approach Mount Doom with the One Ring"
-  },
-  {
-    id: 'tt0167260',
-    title: 'The Lord of the Rings: The Two Towers',
-    poster: 'https://m.media-amazon.com/images/M/MV5BNzA5ZDNlZWMtM2NhNS00NDJjLTk4NDItYTRmY2EwMWZlMTY3XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg',
-    plot: "Gandalf and Aragorn lead the World of Men against Sauron's army to draw his gaze from Frodo and Sam as they approach Mount Doom with the One Ring"
-  },
-  {
-    id: 'tt0167260',
-    title: 'The Lord of the Rings: The Return of the King',
-    poster: 'https://m.media-amazon.com/images/M/MV5BNzA5ZDNlZWMtM2NhNS00NDJjLTk4NDItYTRmY2EwMWZlMTY3XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg',
-    plot: "Gandalf and Aragorn lead the World of Men against Sauron's army to draw his gaze from Frodo and Sam as they approach Mount Doom with the One Ring"
-  }
-]
-*/

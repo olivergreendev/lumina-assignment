@@ -1,44 +1,84 @@
 table {
-    width: 100%;
+  width: 100%;
 }
 .mat-table {
-    background-color: transparent !important;
+  background-color: transparent !important;
+  thead, td {
+    border-radius: 12px;
+  }
+  tr.example-detail-row {
+    height: 0;
+  }
+  tr.example-element-row:not(.example-expanded-row):hover {
+    background: whitesmoke;
+  }
+  tr.example-element-row:not(.example-expanded-row):active {
+    background: #efefef;
+  }
+  .example-element-row td {
+    border-bottom-width: 0;
+  }
+  .example-element-detail {
+    overflow: hidden;
+    display: flex;
+  }
+  tr:last-child td:last-child {
+    border-bottom: none;
+  }
+  .mat-column-id, .mat-column-name, .mat-column-favourites {
+    width: 33%;
+  }
 }
 .mat-elevation-z8 {
-    border-radius: 12px;
-}
-.mat-table thead, td {
-    border-radius: 12px;
+  border-radius: 12px;
 }
 .mat-paginator {
-    border-radius: 12px;
+  border-radius: 12px;
 }
-
-// Pasted
-table {
-    width: 100%;
-  }
-  
-tr.example-detail-row {
-  height: 0;
-}
-
-tr.example-element-row:not(.example-expanded-row):hover {
-  background: whitesmoke;
-}
-
-tr.example-element-row:not(.example-expanded-row):active {
-  background: #efefef;
-}
-
-.example-element-row td {
-  border-bottom-width: 0;
-}
-
-.example-element-detail {
-  overflow: hidden;
+.movies-container {
   display: flex;
+  flex-flow: column nowrap;
+  .movie-wrapper {
+    display: flex;
+    flex-flow: row nowrap;
+    margin: 20px 0;
+    .movie-poster {
+      border-radius: 12px;
+      width: 170px;
+      height: 250px;
+      object-fit: cover;
+      flex-shrink: 0;
+      transition: transform 0.3s ease;
+      &:hover {
+        transform: translateY(-10px);
+      }
+    }
+    .movie-details {
+      display: flex;
+      flex-flow: column nowrap;
+      padding-left: 20px;
+      .movie-title {
+        font-weight: 500;
+        margin: 0 0 8px;
+      }
+      .movie-plot {
+        max-width: 450px;
+      }
+      .movie-director {
+        h3 {
+          font-weight: 500;
+        }
+      }
+      .movie-facts {
+        .movie-rating {
+          padding: 8px;
+          border-radius: 8px;
+          background: rgba(139, 255, 0, 0.3);
+        }
+      }
+    }
+  }
 }
-tr:last-child td:last-child {
-  border-bottom: none;
+.favourites-movie-titles:not(:last-child)::after {
+  content: ", ";
 }
