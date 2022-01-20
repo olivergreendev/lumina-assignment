@@ -1,34 +1,99 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { HttpClient } from '@angular/common/http';
 import { Component, ViewChild, AfterViewInit } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-import { UserDataService } from 'src/app/services/user-data.service';
+import { OmdbRequestService } from 'src/app/services/omdb-request.service';
+import { UsersService } from 'src/app/services/users.service';
 
 @Component({
   selector: 'app-user-data',
   templateUrl: './user-data.component.html',
-  styleUrls: ['./user-data.component.scss']
+  styleUrls: ['./user-data.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expandeed', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
 
 export class UserDataComponent implements AfterViewInit {
 
-  displayedColumns: string[] = ['id', 'name', 'favouriteCount'];
-  userData: any = [];
-  dataSource = new MatTableDataSource<UserModel>(USER_DATA);
+  columnsToDisplay: string[] = ['id', 'name', 'favourites'];
+  expandedElement: UserModel | null;
+  userData = null;
+  userMovieData = [];
+  fetchedUserMovieData = [];
+  dataSource = new MatTableDataSource<UserModel>(this.userData);
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private http: HttpClient, private userDataService: UserDataService) { }
+  constructor(private http: HttpClient,
+              private omdbRequestService: OmdbRequestService,
+              private usersRequestService: UsersService) { }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
   }
 
   ngOnInit() {
-    this.userDataService.getUserData().subscribe(data => {
+    
+    // this.fetchUserData().then(res => this.fetchMovieData());
+
+    this.usersRequestService.getUsers().subscribe((data: any) => {
       this.userData = data;
-      console.log(this.userData);
+      this.dataSource = this.userData;
+      for(let i = 0; i < data.length; i++) {
+        this.userMovieData.push(data[i].favourite_movies.split(','));
+        for(let k = 0; k < this.userMovieData[i].length; k++) {
+          this.omdbRequestService.getMovieData(this.userMovieData[i][k]).subscribe((data: Movie) => {
+            // this.fetchedUserMovieData.push([{title: data.Title, poster: data.Poster, plot: data.Plot}]);
+            this.userMovieData[i][k] = {title: data.Title, poster: data.Poster, plot: data.Plot};
+          });
+        }
+      }
+      console.log(this.userMovieData);
+      // console.log(this.fetchedUserMovieData);
     })
+
+    // This is working, however the API code needs this.userMovieData to not = null before executing
+    // Promises ?
+    // setTimeout(() => {
+    //   for(let i = 0; i < this.userMovieData.length; i++) {
+    //     for(let k = 0; k < this.userMovieData[i].length; k++) {
+    //       this.omdbRequestService.getMovieData(this.userMovieData[i][k]).subscribe((data: Movie) => {
+    //         this.userMovieData[i][k] = {title: data.Title, poster: data.Poster, plot: data.Plot};
+    //       });
+    //     }
+    //   }
+    //   // console.log(this.userMovieData);
+    // }, 2000);
+  }
+  fetchUserData() {
+    return new Promise((resolve, reject) => {
+      this.usersRequestService.getUsers().subscribe((data: any) => {
+        this.userData = data;
+        this.dataSource = this.userData;
+        for(let i = 0; i < data.length; i++) {
+          this.userMovieData.push(data[i].favourite_movies.split(','));
+        }
+        // console.log(this.userMovieData);
+        resolve('Promise resolved.');
+      });
+    });
+  }
+
+  fetchMovieData() {
+    for(let i = 0; i < this.userMovieData.length; i++) {
+      for(let k = 0; k < this.userMovieData[i].length; k++) {
+        this.omdbRequestService.getMovieData(this.userMovieData[i][k]).subscribe((data: Movie) => {
+          this.userMovieData[i][k] = {title: data.Title, poster: data.Poster, plot: data.Plot};
+        });
+      }
+    }
+    // console.log(this.userMovieData[5][1]);
   }
 }
 
@@ -37,12 +102,34 @@ export interface UserModel {
   firstName: string;
   lastName: string;
   favourite_movies: string;
+  movies: string[];
 }
 
-const USER_DATA: UserModel[] = [
-  { id: 1, firstName: 'Anona', lastName: 'Cruz', favourite_movies: 'tt0848228,tt4154756,tt2395427,tt4154796' },
-  { id: 2, firstName: 'Camilla', lastName: 'Sayer', favourite_movies: 'tt4154756,tt10515848,tt0120575' },
-  { id: 3, firstName: 'Ganesh', lastName: 'Zentai', favourite_movies: 'tt0287871,tt2975590,tt0103776,tt4116284,tt2313197' },
-  { id: 4, firstName: 'Vivien', lastName: 'Straub', favourite_movies: 'tt0926084,tt0417741' },
-  { id: 5, firstName: 'Bernardita', lastName: 'Bishop', favourite_movies: 'tt0389860' },
-];
+export interface Movie {
+  Title: string;
+  Poster: string;
+  Plot: string;
+}
+
+/*
+[
+  {
+    id: 'tt0167260',
+    title: 'The Lord of the Rings: The Fellowship of the Ring',
+    poster: 'https://m.media-amazon.com/images/M/MV5BNzA5ZDNlZWMtM2NhNS00NDJjLTk4NDItYTRmY2EwMWZlMTY3XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg',
+    plot: "Gandalf and Aragorn lead the World of Men against Sauron's army to draw his gaze from Frodo and Sam as they approach Mount Doom with the One Ring"
+  },
+  {
+    id: 'tt0167260',
+    title: 'The Lord of the Rings: The Two Towers',
+    poster: 'https://m.media-amazon.com/images/M/MV5BNzA5ZDNlZWMtM2NhNS00NDJjLTk4NDItYTRmY2EwMWZlMTY3XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg',
+    plot: "Gandalf and Aragorn lead the World of Men against Sauron's army to draw his gaze from Frodo and Sam as they approach Mount Doom with the One Ring"
+  },
+  {
+    id: 'tt0167260',
+    title: 'The Lord of the Rings: The Return of the King',
+    poster: 'https://m.media-amazon.com/images/M/MV5BNzA5ZDNlZWMtM2NhNS00NDJjLTk4NDItYTRmY2EwMWZlMTY3XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg',
+    plot: "Gandalf and Aragorn lead the World of Men against Sauron's army to draw his gaze from Frodo and Sam as they approach Mount Doom with the One Ring"
+  }
+]
+*/

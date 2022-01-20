@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { UserDataService } from './user-data.service';
+import { OmdbRequestService } from './omdb-request.service';
 
-describe('UserDataService', () => {
-  let service: UserDataService;
+describe('OmdbRequestService', () => {
+  let service: OmdbRequestService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(UserDataService);
+    service = TestBed.inject(OmdbRequestService);
   });
 
   it('should be created', () => {
