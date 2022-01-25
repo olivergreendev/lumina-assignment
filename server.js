@@ -4,12 +4,13 @@ const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const app = express();
 const port = process.env.PORT || 8080;
-const path = require('path');
+// const path = require('path');
 
 app.use(cors());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'dist/angular-lumina-assignment')));
+// app.use(express.static(path.join(__dirname, 'dist/angular-lumina-assignment')));
+app.use(express.static('./dist/angular-lumina-assignment'));
 
 // MySQL
 // const connection = mysql.createConnection({
@@ -20,7 +21,8 @@ app.use(express.static(path.join(__dirname, 'dist/angular-lumina-assignment')));
 // });
 
 app.get('/*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist/angular-lumina-assignment/index.html'));
+  // res.sendFile(path.join(__dirname, 'dist/angular-lumina-assignment/index.html'));
+  res.sendFile('index.html', {root: 'dist/angular-lumina-assignment'});
 });
 
 // GET: retrieve data on all users
