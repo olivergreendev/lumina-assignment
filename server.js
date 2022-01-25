@@ -18,6 +18,11 @@ const connection = mysql.createConnection({
     password: 'password',
     database: 'lumina'
 });
+
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist/angular-lumina-assignment/index.html'));
+});
+
 // GET: retrieve data on all users
 app.get('/api/users', (req, res) => {
   let sql = `SELECT * FROM users`;
@@ -48,10 +53,6 @@ app.delete('/api/user/:id', (req, res) => {
     if (err) throw err;
     res.json(data);
   });
-});
-
-app.get('/*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist/angular-lumina-assignment/index.html'));
 });
 
 app.listen(port, (req, res) => {
