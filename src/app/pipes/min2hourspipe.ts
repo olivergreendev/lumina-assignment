@@ -6,12 +6,16 @@ import { Pipe, PipeTransform } from "@angular/core";
 
 export class MinutesToHoursPipe implements PipeTransform {
   transform(value: string): string {
-    if (value !== undefined) {      
+    if (value !== undefined && value !== "N/A") {      
       const oldValue: number = Number(value.replace(' min', ''));
-      if (oldValue > 0 && (oldValue / 60) < 1) {
-        return String(Math.round(oldValue) + 'm');
+      const hours = (oldValue / 60);
+      const hoursRounded = Math.floor(hours);
+      const minutes = ((hours - hoursRounded) * 60);
+      const minutesRounded = Math.round(minutes);
+      if (hoursRounded > 0) {
+        return `${hoursRounded}h ${minutesRounded}m`;
       } else {
-        return String(Math.round((oldValue / 60)) + 'h');
+        return `${minutesRounded}m`;
       }
     } else {
       return 'N/A';

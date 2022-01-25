@@ -3,14 +3,12 @@ table {
 }
 .mat-table {
   background-color: transparent !important;
-  thead, td {
-    border-radius: 12px;
-  }
   tr.example-detail-row {
     height: 0;
   }
-  tr.example-element-row:not(.example-expanded-row):hover {
+  tr.example-element-row:hover {
     background: whitesmoke;
+    cursor: pointer;
   }
   tr.example-element-row:not(.example-expanded-row):active {
     background: #efefef;
@@ -21,16 +19,18 @@ table {
   .example-element-detail {
     overflow: hidden;
     display: flex;
+    flex-direction: column;
   }
   tr:last-child td:last-child {
     border-bottom: none;
   }
-  .mat-column-id, .mat-column-name, .mat-column-favourites {
-    width: 33%;
+  .mat-column-deleteUser {
+    width: 5%;
   }
 }
 .mat-elevation-z8 {
-  border-radius: 12px;
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.01),0px 8px 10px 1px rgba(0, 0, 0, 0.01),0px 3px 14px 2px rgba(0, 0, 0, 0.1);
 }
 .mat-paginator {
   border-radius: 12px;
@@ -57,12 +57,13 @@ table {
       display: flex;
       flex-flow: column nowrap;
       padding-left: 20px;
+      position: relative;
       .movie-title {
         font-weight: 500;
         margin: 0 0 8px;
       }
       .movie-plot {
-        max-width: 450px;
+        max-width: 700px;
       }
       .movie-director {
         h3 {
@@ -76,9 +77,43 @@ table {
           background: rgba(139, 255, 0, 0.3);
         }
       }
+      .movie-delete-button {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+      }
     }
   }
 }
-.favourites-movie-titles:not(:last-child)::after {
-  content: ", ";
+.favourite-movie-titles {
+  a {
+    margin-right: 10px;
+    text-decoration: none;
+    color: black;
+    &:active, &:focus, &:visited {
+      text-decoration: none;
+    }
+    &:hover {
+      color: #0065ff;
+      text-decoration: underline;
+    }
+  }
+}
+.favourite-movies-count {
+  padding: 10px 15px;
+  border-radius: 6px;
+  background-color: rgba(25, 156, 250, 0.2);
+}
+.example-form-field {
+  width: 200px;
+}
+.add-movie-button {
+  background-color: rgba(63, 81, 181, 0.05);
+  margin-bottom: 20px;
+}
+.table-refresh-button::after {
+  content: 'Refresh';
+  position: absolute;
+  right: -55px;
+  bottom: 0;
 }

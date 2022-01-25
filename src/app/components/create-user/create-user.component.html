@@ -1,0 +1,22 @@
+<div class="content-wrapper">
+  <h1>Create User</h1>
+  <p>Users can be created by simply entering a First name, Last name, and a comma-separated string of their favourite movies.</p> 
+  <p class="text-secondary">E.g. tt0120737,tt0167261,tt0167260</p>
+  <form [formGroup]="createUserForm" (ngSubmit)="onSubmit()">
+    <div class="form-user-name">
+      <mat-form-field appearance="fill">
+        <mat-label>First Name</mat-label>
+        <input matInput formControlName="firstName">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Last Name</mat-label>
+        <input matInput formControlName="lastName">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Favourite Movies</mat-label>
+        <input matInput formControlName="favouriteMovies">
+      </mat-form-field>
+    </div>
+    <button mat-button color="primary" type="submit" class="create-user-button">Create User</button>
+  </form>
+</div>
